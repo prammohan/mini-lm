@@ -56,7 +56,7 @@ class Attention(nn.Module):
         # Tril - refers to lower triangle of the matrix 
         # Lower triangle are ones, upper are zeroes
         # So only lower triangle is considered (upper triangle scores are ignored)
-        mask = torch.tril(torch.ones(seq_len, seq_len))
+        mask = torch.tril(torch.ones(seq_len, seq_len, device=x.device))
 
         # we use negative infinity as e^-inf=0 for all places where mask is zero (upper triangle)
         # if we zero e^0=1 which is still some probability
@@ -158,8 +158,8 @@ if __name__ == "__main__":
             if epoch == 0 and i == 0:
                 do_profile = True
             
-            batch = input_tensors[i : i + batch_size]
-            targets_batch = target_tensors[i : i + batch_size]
+            batch = input_tensors[i : i + batch_size].to(device)
+            targets_batch = target_tensors[i : i + batch_size].to(device)
 
             if do_profile:
                 prof = profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA])
